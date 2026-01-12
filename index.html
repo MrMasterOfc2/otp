@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahan Maduwantha - Login & Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-purple: #8a2be2;
+            --dark-purple: #6a0dad;
+            --light-purple: #b19cd9;
+            --black: #121212;
+            --dark-gray: #1e1e1e;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --success: #4caf50;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--dark-gray);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--primary-purple), var(--dark-purple));
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--light-purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title i {
+            color: var(--primary-purple);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--light-purple);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .input-group .icon {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            color: var(--primary-purple);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, var(--primary-purple), var(--dark-purple));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, var(--dark-purple), var(--primary-purple));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+        }
+
+        .otp-input {
+            width: 60px;
+            height: 70px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 8px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+
+        .otp-input.filled {
+            border-color: var(--success);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--light-purple);
+        }
+
+        .resend-otp a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .resend-otp a:hover {
+            text-decoration: underline;
+        }
+
+        .timer {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background-color: var(--primary-purple);
+            color: white;
+        }
+
+        .step.completed {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .step-line {
+            position: absolute;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.1);
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50px;
+            right: 50px;
+            z-index: 1;
+        }
+
+        .step-line-fill {
+            position: absolute;
+            height: 2px;
+            background-color: var(--primary-purple);
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50px;
+            width: 0;
+            transition: width 0.5s ease;
+            z-index: 1;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+            margin-top: 15px;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+        }
+
+        .success-message h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--success);
+        }
+
+        .user-details {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid var(--primary-purple);
+        }
+
+        .user-details h4 {
+            color: var(--light-purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            width: 120px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .detail-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .otp-input {
+                width: 50px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">SM</div>
+            <h1>Sahan Maduwantha</h1>
+            <p>Secure Login & Verification System</p>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+            <div class="step" id="step3">3</div>
+            <div class="step-line"></div>
+            <div class="step-line-fill" id="stepLineFill"></div>
+        </div>
+        
+        <div class="form-container">
+            <!-- Step 1: User Details -->
+            <div class="form-step active" id="step1Form">
+                <h2 class="form-title"><i class="fas fa-user-circle"></i> Enter Your Details</h2>
+                
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name">
+                    <i class="fas fa-user icon"></i>
+                </div>
+                
+                <div class="input-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number">
+                    <i class="fas fa-phone icon"></i>
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email address">
+                    <i class="fas fa-envelope icon"></i>
+                </div>
+                
+                <button class="btn" id="nextBtn">
+                    <span>Continue</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <!-- Step 2: OTP Verification -->
+            <div class="form-step" id="step2Form">
+                <h2 class="form-title"><i class="fas fa-shield-alt"></i> Verify Your Email</h2>
+                <p style="margin-bottom: 20px; color: rgba(255, 255, 255, 0.8);">We've sent a 6-digit OTP to your email address. Please enter it below.</p>
+                
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" data-index="0">
+                    <input type="text" class="otp-input" maxlength="1" data-index="1">
+                    <input type="text" class="otp-input" maxlength="1" data-index="2">
+                    <input type="text" class="otp-input" maxlength="1" data-index="3">
+                    <input type="text" class="otp-input" maxlength="1" data-index="4">
+                    <input type="text" class="otp-input" maxlength="1" data-index="5">
+                </div>
+                
+                <div class="resend-otp">
+                    <p>Didn't receive the code? <span id="timer">Resend OTP in <span class="timer">60</span>s</span></p>
+                    <a id="resendOtp">Resend OTP</a>
+                </div>
+                
+                <button class="btn" id="verifyBtn" disabled>
+                    <span>Verify OTP</span>
+                    <i class="fas fa-check-circle"></i>
+                </button>
+                
+                <button class="btn back-btn" id="backBtn1">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Details</span>
+                </button>
+            </div>
+            
+            <!-- Step 3: Success -->
+            <div class="form-step" id="step3Form">
+                <div class="success-message">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3>Verification Successful!</h3>
+                    <p>Your account has been successfully verified and created.</p>
+                    
+                    <div class="user-details">
+                        <h4><i class="fas fa-user-check"></i> Your Details</h4>
+                        <div class="detail-item">
+                            <div class="detail-label">Name:</div>
+                            <div class="detail-value" id="displayName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone:</div>
+                            <div class="detail-value" id="displayPhone">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email:</div>
+                            <div class="detail-value" id="displayEmail">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status:</div>
+                            <div class="detail-value" style="color: var(--success);">Verified</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="newUserBtn" style="margin-top: 30px;">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Another Account</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2023 Sahan Maduwantha. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const step1Form = document.getElementById('step1Form');
+        const step2Form = document.getElementById('step2Form');
+        const step3Form = document.getElementById('step3Form');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const stepLineFill = document.getElementById('stepLineFill');
+        
+        const nextBtn = document.getElementById('nextBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const backBtn1 = document.getElementById('backBtn1');
+        const resendOtp = document.getElementById('resendOtp');
+        const newUserBtn = document.getElementById('newUserBtn');
+        const timerDisplay = document.querySelector('.timer');
+        
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        
+        const displayName = document.getElementById('displayName');
+        const displayPhone = document.getElementById('displayPhone');
+        const displayEmail = document.getElementById('displayEmail');
+        
+        // Variables
+        let currentStep = 1;
+        let otp = '';
+        let generatedOtp = '';
+        let timer = 60;
+        let timerInterval;
+        
+        // Initialize
+        function init() {
+            // Generate a random OTP for simulation
+            generatedOtp = generateOTP();
+            console.log('Generated OTP (for demo):', generatedOtp);
+            
+            // Add event listeners
+            nextBtn.addEventListener('click', goToStep2);
+            verifyBtn.addEventListener('click', verifyOTP);
+            backBtn1.addEventListener('click', goBackToStep1);
+            resendOtp.addEventListener('click', resendOTP);
+            newUserBtn.addEventListener('click', resetForm);
+            
+            // OTP input handling
+            otpInputs.forEach(input => {
+                input.addEventListener('input', handleOtpInput);
+                input.addEventListener('keydown', handleOtpKeydown);
+            });
+            
+            // Form validation on input
+            nameInput.addEventListener('input', validateStep1);
+            phoneInput.addEventListener('input', validateStep1);
+            emailInput.addEventListener('input', validateStep1);
+            
+            // Validate step 1 on load
+            validateStep1();
+            
+            // Start OTP timer
+            startTimer();
+        }
+        
+        // Generate a 6-digit OTP
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        // Validate step 1 form
+        function validateStep1() {
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            // Simple validation
+            const isNameValid = name.length >= 2;
+            const isPhoneValid = /^[0-9]{10,15}$/.test(phone);
+            const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            
+            nextBtn.disabled = !(isNameValid && isPhoneValid && isEmailValid);
+        }
+        
+        // Go to step 2
+        function goToStep2() {
+            // Validate inputs
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            if (!name || !phone || !email) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Show OTP step
+            step1Form.classList.remove('active');
+            step2Form.classList.add('active');
+            
+            // Update step indicator
+            step1.classList.remove('active');
+            step1.classList.add('completed');
+            step2.classList.add('active');
+            
+            // Update progress line
+            stepLineFill.style.width = '33.33%';
+            
+            currentStep = 2;
+            
+            // Clear OTP inputs
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            // Reset OTP
+            otp = '';
+            verifyBtn.disabled = true;
+            
+            // Update email display
+            document.querySelector('#step2Form p').innerHTML = `We've sent a 6-digit OTP to <strong>${email}</strong>. Please enter it below.`;
+            
+            // Simulate sending OTP to email
+            simulateEmailSend(email);
+        }
+        
+        // Simulate sending OTP to email
+        function simulateEmailSend(email) {
+            console.log(`OTP ${generatedOtp} sent to ${email}`);
+            // In a real application, you would send the OTP via your backend
+        }
+        
+        // Handle OTP input
+        function handleOtpInput(e) {
+            const input = e.target;
+            const index = parseInt(input.getAttribute('data-index'));
+            
+            // Only allow numbers
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            // Update OTP string
+            if (input.value) {
+                otp = otp.substring(0, index) + input.value + otp.substring(index + 1);
+                input.classList.add('filled');
+                
+                // Move to next input
+                if (index < 5) {
+                    otpInputs[index + 1].focus();
+                }
+            } else {
+                otp = otp.substring(0, index) + ' ' + otp.substring(index + 1);
+                input.classList.remove('filled');
+            }
+            
+            // Check if OTP is complete
+            const isOtpComplete = otp.replace(/\s/g, '').length === 6;
+            verifyBtn.disabled = !isOtpComplete;
+        }
+        
+        // Handle OTP keydown (backspace navigation)
+        function handleOtpKeydown(e) {
+            const input = e.target;
+            const index = parseInt(input.getAttribute('data-index'));
+            
+            if (e.key === 'Backspace' && !input.value && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        }
+        
+        // Verify OTP
+        function verifyOTP() {
+            // Check if OTP matches
+            if (otp.replace(/\s/g, '') === generatedOtp) {
+                // OTP is correct, go to success step
+                step2Form.classList.remove('active');
+                step3Form.classList.add('active');
+                
+                // Update step indicator
+                step2.classList.remove('active');
+                step2.classList.add('completed');
+                step3.classList.add('active');
+                
+                // Update progress line
+                stepLineFill.style.width = '100%';
+                
+                currentStep = 3;
+                
+                // Display user details
+                displayName.textContent = nameInput.value.trim();
+                displayPhone.textContent = phoneInput.value.trim();
+                displayEmail.textContent = emailInput.value.trim();
+                
+                // Clear timer
+                clearInterval(timerInterval);
+            } else {
+                // OTP is incorrect
+                alert('Invalid OTP. Please try again.');
+                
+                // Shake OTP inputs
+                otpInputs.forEach(input => {
+                    input.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        input.style.animation = '';
+                    }, 500);
+                });
+                
+                // Clear OTP inputs
+                otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+                
+                // Reset focus
+                otpInputs[0].focus();
+                otp = '';
+                verifyBtn.disabled = true;
+            }
+        }
+        
+        // Go back to step 1
+        function goBackToStep1() {
+            step2Form.classList.remove('active');
+            step1Form.classList.add('active');
+            
+            // Update step indicator
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            step1.classList.remove('completed');
+            
+            // Update progress line
+            stepLineFill.style.width = '0';
+            
+            currentStep = 1;
+        }
+        
+        // Resend OTP
+        function resendOTP() {
+            if (timer > 0) return;
+            
+            // Generate new OTP
+            generatedOtp = generateOTP();
+            console.log('New OTP generated:', generatedOtp);
+            
+            // Clear OTP inputs
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            // Reset focus
+            otpInputs[0].focus();
+            otp = '';
+            verifyBtn.disabled = true;
+            
+            // Reset timer
+            timer = 60;
+            startTimer();
+            
+            // Show success message
+            const originalText = resendOtp.textContent;
+            resendOtp.textContent = 'OTP Sent!';
+            resendOtp.style.color = 'var(--success)';
+            
+            setTimeout(() => {
+                resendOtp.textContent = originalText;
+                resendOtp.style.color = '';
+            }, 2000);
+            
+            // Simulate sending OTP to email
+            simulateEmailSend(emailInput.value.trim());
+        }
+        
+        // Start OTP timer
+        function startTimer() {
+            clearInterval(timerInterval);
+            
+            // Disable resend button
+            resendOtp.style.pointerEvents = 'none';
+            resendOtp.style.opacity = '0.5';
+            
+            timerInterval = setInterval(() => {
+                timer--;
+                timerDisplay.textContent = timer;
+                
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    resendOtp.style.pointerEvents = 'auto';
+                    resendOtp.style.opacity = '1';
+                    document.querySelector('#timer').innerHTML = 'Ready to resend?';
+                }
+            }, 1000);
+        }
+        
+        // Reset form for new user
+        function resetForm() {
+            // Reset forms
+            step3Form.classList.remove('active');
+            step1Form.classList.add('active');
+            
+            // Reset step indicator
+            step1.classList.add('active');
+            step2.classList.remove('active');
+            step3.classList.remove('active');
+            step1.classList.remove('completed');
+            step2.classList.remove('completed');
+            
+            // Update progress line
+            stepLineFill.style.width = '0';
+            
+            currentStep = 1;
+            
+            // Clear form inputs
+            nameInput.value = '';
+            phoneInput.value = '';
+            emailInput.value = '';
+            
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            otp = '';
+            generatedOtp = generateOTP();
+            console.log('New OTP generated:', generatedOtp);
+            
+            // Reset timer
+            timer = 60;
+            startTimer();
+            
+            // Validate step 1
+            validateStep1();
+        }
+        
+        // Initialize the application
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
